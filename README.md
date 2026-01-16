@@ -46,16 +46,26 @@ FormForce is a comprehensive, all-in-one field service management platform that 
 
 ### 👥 Customer Management (CRM)
 - **Centralized Database**: Customer contact information and history
-- **Job History**: Complete record of all customer interactions
-- **Client Portals**: Self-service portals for customers
+- **Customer Profiles**: Company info, contacts, addresses
+- **Search & Filter**: Quick customer lookup and organization
+- **Real-time Sync**: Live updates across all devices
 - **Communication Tracking**: Email, phone, and note history
 
 ### 💰 Invoicing & Payments
 - **Professional Invoicing**: Create branded invoices quickly
-- **Estimate-to-Job Conversion**: One-click conversion from estimates
-- **Good/Better/Best Pricing**: Multi-tier estimate options
-- **Credit Card Processing**: Accept payments on mobile devices
-- **Electronic Payments**: Faster payment collection
+- **Estimate-to-Invoice Conversion**: One-click conversion from estimates
+- **Line Item Management**: Detailed pricing breakdown
+- **Payment Tracking**: Record and track payments (pending/partial/paid)
+- **Tax Calculations**: Automatic tax calculation by rate
+- **Multiple Tiers**: Good/Better/Best pricing options via line items
+
+### ⏰ Time Tracking & Payroll
+- **Clock In/Out**: Simple time tracking for employees
+- **Live Timers**: Real-time elapsed time display
+- **Payroll Calculation**: Automatic hours and pay calculation
+- **Hourly Rates**: Customizable rates per employee
+- **Break Tracking**: Deduct break time from total hours
+- **Payroll Reports**: Summary by employee and date range
 
 ### 📊 Reporting & Analytics
 - **Customizable Reports**: Aggregate data from multiple forms
@@ -69,6 +79,13 @@ FormForce is a comprehensive, all-in-one field service management platform that 
 - **HIPAA Available**: Optional add-on for healthcare providers
 - **Custom SSO**: Single Sign-On integration
 - **Granular Permissions**: Role-based access control
+
+### 📱 Progressive Web App (PWA)
+- **Install on Device**: Add to home screen on any device
+- **Offline Support**: Service worker for offline functionality
+- **Push Notifications**: Real-time alerts and updates
+- **Mobile Optimized**: Native app-like experience
+- **Cross-Platform**: Works on iOS, Android, and desktop
 
 ### 🔗 Integrations
 - **QuickBooks**: Seamless accounting sync (eliminate double entry)
@@ -290,13 +307,13 @@ NODE_ENV=production npm start
 - [x] Real-time updates
 - [x] GPS integration
 
-### Phase 2: Field Service Management (In Progress)
-- [ ] Full CRM with customer database
-- [ ] Estimates and invoicing system
-- [ ] Payment processing integration
-- [ ] Time tracking and payroll
-- [ ] Advanced scheduling calendar
-- [ ] Mobile app for technicians
+### Phase 2: Field Service Management ✅
+- [x] Full CRM with customer database
+- [x] Estimates and invoicing system
+- [x] Payment processing integration
+- [x] Time tracking and payroll
+- [x] Advanced scheduling calendar (via dispatch)
+- [x] Mobile app for technicians (PWA)
 
 ### Phase 3: Integrations
 - [ ] QuickBooks sync

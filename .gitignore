@@ -11,3 +11,8 @@ build/
 .idea/
 *.sqlite
 *.db
+
+# Test coverage
+coverage/
+client/coverage/
+*.lcov

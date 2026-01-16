@@ -355,3 +355,69 @@
     max-height: calc(100vh - 2rem);
   }
 }
+
+/* QR Code Modal */
+.qr-modal {
+  max-width: 600px;
+}
+
+.qr-content {
+  padding: 20px;
+}
+
+.qr-info {
+  margin-bottom: 20px;
+}
+
+.qr-info p {
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.qr-instruction {
+  color: #666;
+  font-style: italic;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
+.qr-display {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.qr-placeholder {
+  text-align: center;
+}
+
+.qr-text-display {
+  padding: 40px;
+  background: white;
+  border: 2px solid #333;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.btn-qr {
+  background: #17a2b8;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+.btn-qr:hover {
+  background: #138496;
+}
+

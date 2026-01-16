@@ -1,0 +1,86 @@
+.service-calls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.service-call-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.service-call-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.call-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.call-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+  flex: 1;
+}
+
+.call-badges {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.call-details {
+  margin-bottom: 15px;
+}
+
+.call-details p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.call-details strong {
+  color: #333;
+}
+
+.call-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.empty-state p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .service-calls-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .call-header {
+    flex-direction: column;
+  }
+  
+  .call-badges {
+    margin-top: 10px;
+  }
+}

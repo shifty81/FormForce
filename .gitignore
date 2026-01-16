@@ -16,3 +16,4 @@ build/
 coverage/
 client/coverage/
 *.lcov
+uploads/

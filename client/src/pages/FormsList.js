@@ -73,7 +73,14 @@ function FormsList() {
         <div className="grid grid-2" style={{ gap: '1.5rem' }}>
           {filteredForms.map(form => (
             <div key={form.id} className="card">
-              <div className="card-header">{form.title}</div>
+              <div className="card-header">
+                {form.title}
+                {form.uploaded_file_path && (
+                  <span style={{ marginLeft: '8px', fontSize: '0.9rem', color: '#4285f4' }}>
+                    📄 Document
+                  </span>
+                )}
+              </div>
               <p style={{ color: '#64748b', marginBottom: '1rem' }}>
                 {form.description || 'No description'}
               </p>
@@ -81,9 +88,20 @@ function FormsList() {
                 {form.fields?.length || 0} fields • Created {new Date(form.created_at).toLocaleDateString()}
               </div>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                <Link to={`/forms/${form.id}`} className="btn btn-primary" style={{ flex: 1 }}>
-                  View
-                </Link>
+                {form.uploaded_file_path ? (
+                  <Link 
+                    to={`/forms/${form.id}/fill-document`} 
+                    className="btn btn-primary" 
+                    style={{ flex: 1 }}
+                    title="Fill form on document"
+                  >
+                    ✏️ Fill Document
+                  </Link>
+                ) : (
+                  <Link to={`/forms/${form.id}`} className="btn btn-primary" style={{ flex: 1 }}>
+                    View
+                  </Link>
+                )}
                 <Link to={`/forms/${form.id}/edit`} className="btn btn-secondary" style={{ flex: 1 }}>
                   Edit
                 </Link>

@@ -243,6 +243,17 @@ function AIFormUpload() {
     return fields;
   };
 
+  const generateFieldPositions = (fields) => {
+    // Generate field positions (estimated positions for now)
+    return fields.map((field, index) => ({
+      fieldId: field.id,
+      x: 10,
+      y: 10 + (index * 50),
+      width: 80,
+      height: 40
+    }));
+  };
+
   const handleUpload = async () => {
     if (!file && !capturedImage) return;
 
@@ -255,8 +266,10 @@ function AIFormUpload() {
       const isImage = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileType) || capturedImage;
 
       let fields;
+      let fieldPositions = [];
       let title;
       let description;
+      let imageSource;
 
       if (isImage) {
         // Image processing with OCR
@@ -264,14 +277,16 @@ function AIFormUpload() {
         await new Promise(resolve => setTimeout(resolve, 500));
         
         // Perform OCR
-        const imageSource = capturedImage || await readFileAsDataURL(file);
+        imageSource = capturedImage || await readFileAsDataURL(file);
         const extractedText = await performOCR(imageSource);
         
         setProgress('Analyzing extracted text...');
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        // Generate fields from OCR text
+        // Generate fields from OCR text with positions
         fields = analyzeTextAndGenerateFields(extractedText);
+        fieldPositions = generateFieldPositions(fields);
+        
         title = 'Form from Image';
         description = `AI-generated form from image capture. Detected ${fields.length} fields.`;
         
@@ -284,20 +299,36 @@ function AIFormUpload() {
         await new Promise(resolve => setTimeout(resolve, 1500));
         
         fields = generateSampleFields(file.name);
+        fieldPositions = generateFieldPositions(fields);
+        
         title = file.name.replace(/\.[^/.]+$/, '');
         description = `AI-generated form from ${file.name}`;
       }
 
-      setProgress('Generating digital form...');
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      setProgress('Uploading document and generating form...');
+      
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('fields', JSON.stringify(fields));
+      formData.append('field_positions', JSON.stringify(fieldPositions));
+      
+      // Add the document file
+      if (file) {
+        formData.append('document', file);
+      } else if (capturedImage) {
+        // Convert base64 to blob and upload
+        const blob = await fetch(capturedImage).then(r => r.blob());
+        const capturedFile = new File([blob], 'captured-form.png', { type: 'image/png' });
+        formData.append('document', capturedFile);
+      }
 
-      const formData = {
-        title,
-        description,
-        fields
-      };
-
-      const response = await axios.post('/api/forms', formData);
+      const response = await axios.post('/api/forms', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
       
       setProgress('Form created successfully!');
       

@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import FormBuilder from './pages/FormBuilder';
 import FormsList from './pages/FormsList';
 import FormView from './pages/FormView';
+import EditableDocumentForm from './pages/EditableDocumentForm';
 import Dispatch from './pages/Dispatch';
 import Inventory from './pages/Inventory';
 import Customers from './pages/Customers';
@@ -67,6 +68,7 @@ function App() {
             <Route path="/forms/new" element={<FormBuilder />} />
             <Route path="/forms/:id" element={<FormView />} />
             <Route path="/forms/:id/edit" element={<FormBuilder />} />
+            <Route path="/forms/:id/fill-document" element={<EditableDocumentForm />} />
             <Route path="/ai-upload" element={<AIFormUpload />} />
             <Route path="/servicecalls" element={<ServiceCalls socket={socket} />} />
             <Route path="/servicecalls/:id" element={<ServiceCallDetail socket={socket} />} />

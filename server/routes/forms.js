@@ -2,6 +2,42 @@ const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const db = require('../database');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+// Configure multer for document uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = path.join(__dirname, '../../uploads/documents');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: function (req, file, cb) {
+    const allowedExtensions = /jpeg|jpg|png|gif|pdf|doc|docx|bmp|webp/;
+    const allowedMimeTypes = /image\/(jpeg|jpg|png|gif|bmp|webp)|application\/(pdf|msword|vnd\.openxmlformats-officedocument\.wordprocessingml\.document)/;
+    
+    const extname = allowedExtensions.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedMimeTypes.test(file.mimetype);
+    
+    if (extname && mimetype) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Only images, PDFs, and Word documents are allowed!'));
+    }
+  }
+});
 
 // Get all forms
 router.get('/', async (req, res) => {
@@ -9,7 +45,8 @@ router.get('/', async (req, res) => {
     const forms = await db.query('SELECT * FROM forms ORDER BY created_at DESC');
     res.json(forms.map(form => ({
       ...form,
-      fields: JSON.parse(form.fields)
+      fields: JSON.parse(form.fields),
+      field_positions: form.field_positions ? JSON.parse(form.field_positions) : null
     })));
   } catch (error) {
     console.error('Error fetching forms:', error);
@@ -26,7 +63,8 @@ router.get('/:id', async (req, res) => {
     }
     res.json({
       ...form,
-      fields: JSON.parse(form.fields)
+      fields: JSON.parse(form.fields),
+      field_positions: form.field_positions ? JSON.parse(form.field_positions) : null
     });
   } catch (error) {
     console.error('Error fetching form:', error);
@@ -34,33 +72,72 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Create form
-router.post('/', async (req, res) => {
+// Create form (with optional file upload)
+router.post('/', upload.single('document'), async (req, res) => {
   try {
-    const { title, description, fields, created_by } = req.body;
+    const { title, description, fields, field_positions, created_by } = req.body;
     const id = uuidv4();
+    
+    let filePath = null;
+    let fileType = null;
+    
+    if (req.file) {
+      filePath = `/uploads/documents/${req.file.filename}`;
+      fileType = req.file.mimetype;
+    }
 
     await db.run(
-      'INSERT INTO forms (id, title, description, fields, created_by) VALUES (?, ?, ?, ?, ?)',
-      [id, title, description, JSON.stringify(fields), created_by || null]
+      'INSERT INTO forms (id, title, description, fields, uploaded_file_path, uploaded_file_type, field_positions, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [id, title, description, fields, filePath, fileType, field_positions || null, created_by || null]
     );
 
-    res.status(201).json({ id, title, description, fields });
+    res.status(201).json({ 
+      id, 
+      title, 
+      description, 
+      fields: JSON.parse(fields),
+      uploaded_file_path: filePath,
+      uploaded_file_type: fileType,
+      field_positions: field_positions ? JSON.parse(field_positions) : null
+    });
   } catch (error) {
     console.error('Error creating form:', error);
     res.status(500).json({ error: 'Failed to create form' });
   }
 });
 
-// Update form
-router.put('/:id', async (req, res) => {
+// Update form (with optional file upload)
+router.put('/:id', upload.single('document'), async (req, res) => {
   try {
-    const { title, description, fields } = req.body;
-    await db.run(
-      'UPDATE forms SET title = ?, description = ?, fields = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-      [title, description, JSON.stringify(fields), req.params.id]
-    );
-    res.json({ id: req.params.id, title, description, fields });
+    const { title, description, fields, field_positions } = req.body;
+    
+    let filePath = null;
+    let fileType = null;
+    
+    if (req.file) {
+      filePath = `/uploads/documents/${req.file.filename}`;
+      fileType = req.file.mimetype;
+      
+      await db.run(
+        'UPDATE forms SET title = ?, description = ?, fields = ?, uploaded_file_path = ?, uploaded_file_type = ?, field_positions = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        [title, description, fields, filePath, fileType, field_positions || null, req.params.id]
+      );
+    } else {
+      await db.run(
+        'UPDATE forms SET title = ?, description = ?, fields = ?, field_positions = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        [title, description, fields, field_positions || null, req.params.id]
+      );
+    }
+    
+    res.json({ 
+      id: req.params.id, 
+      title, 
+      description, 
+      fields: JSON.parse(fields),
+      uploaded_file_path: filePath,
+      uploaded_file_type: fileType,
+      field_positions: field_positions ? JSON.parse(field_positions) : null
+    });
   } catch (error) {
     console.error('Error updating form:', error);
     res.status(500).json({ error: 'Failed to update form' });
@@ -70,6 +147,17 @@ router.put('/:id', async (req, res) => {
 // Delete form
 router.delete('/:id', async (req, res) => {
   try {
+    // Get the form to check if it has an uploaded file
+    const form = await db.get('SELECT uploaded_file_path FROM forms WHERE id = ?', [req.params.id]);
+    
+    // Delete the uploaded file if it exists
+    if (form && form.uploaded_file_path) {
+      const filePath = path.join(__dirname, '../../', form.uploaded_file_path);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+    
     await db.run('DELETE FROM forms WHERE id = ?', [req.params.id]);
     res.json({ message: 'Form deleted successfully' });
   } catch (error) {

@@ -273,6 +273,34 @@ const initialize = () => {
           FOREIGN KEY (technician_id) REFERENCES users(id),
           FOREIGN KEY (qr_code_id) REFERENCES qr_codes(id)
         )
+      `);
+
+      // Purchase orders table
+      db.run(`
+        CREATE TABLE IF NOT EXISTS purchase_orders (
+          id TEXT PRIMARY KEY,
+          po_number TEXT UNIQUE NOT NULL,
+          service_call_id TEXT,
+          vendor_name TEXT NOT NULL,
+          vendor_contact TEXT,
+          vendor_phone TEXT,
+          vendor_email TEXT,
+          status TEXT DEFAULT 'draft',
+          subtotal REAL DEFAULT 0,
+          tax_rate REAL DEFAULT 0,
+          tax_amount REAL DEFAULT 0,
+          total REAL DEFAULT 0,
+          line_items TEXT,
+          notes TEXT,
+          requested_by TEXT,
+          approved_by TEXT,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          approved_at DATETIME,
+          FOREIGN KEY (service_call_id) REFERENCES service_calls(id),
+          FOREIGN KEY (requested_by) REFERENCES users(id),
+          FOREIGN KEY (approved_by) REFERENCES users(id)
+        )
       `, (err) => {
         if (err) reject(err);
         else {

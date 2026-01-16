@@ -19,6 +19,7 @@ const serviceCallsRouter = require('./routes/servicecalls');
 const qrCodesRouter = require('./routes/qrcodes');
 const equipmentRouter = require('./routes/equipment');
 const picturesRouter = require('./routes/pictures');
+const purchaseOrdersRouter = require('./routes/purchaseorders');
 
 const app = express();
 const server = http.createServer(app);
@@ -52,6 +53,7 @@ app.use('/api/servicecalls', serviceCallsRouter);
 app.use('/api/qrcodes', qrCodesRouter);
 app.use('/api/equipment', equipmentRouter);
 app.use('/api/pictures', picturesRouter);
+app.use('/api/purchaseorders', purchaseOrdersRouter);
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {

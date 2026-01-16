@@ -1,0 +1,144 @@
+.form-view {
+  padding: 2rem 0;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.form-view-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.form-view-header h1 {
+  font-size: 2.5rem;
+  color: var(--dark-color);
+  margin-bottom: 0.75rem;
+}
+
+.form-description {
+  font-size: 1.1rem;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.form-view-content {
+  margin-top: 2rem;
+}
+
+.required-mark {
+  color: var(--danger-color);
+  font-weight: bold;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: 2px solid var(--border-color);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.radio-label:hover {
+  border-color: var(--primary-color);
+  background: var(--light-color);
+}
+
+.radio-label input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.checkbox-label-large {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.checkbox-label-large:hover {
+  border-color: var(--primary-color);
+  background: var(--light-color);
+}
+
+.checkbox-label-large input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.signature-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.signature-canvas {
+  border: 2px solid var(--border-color);
+  border-radius: 0.5rem;
+  background: white;
+  cursor: crosshair;
+  width: 100%;
+  max-width: 400px;
+  height: 200px;
+}
+
+.signature-notice {
+  font-size: 0.9rem;
+  color: var(--success-color);
+  margin: 0;
+  font-weight: 500;
+}
+
+.gps-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.map-link {
+  display: inline-block;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--primary-color);
+  border-radius: 0.5rem;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.map-link:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.form-actions {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--border-color);
+}
+
+@media (max-width: 640px) {
+  .form-view-header h1 {
+    font-size: 2rem;
+  }
+
+  .signature-canvas {
+    width: 100%;
+    max-width: 100%;
+  }
+}

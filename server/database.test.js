@@ -3,50 +3,61 @@
  * Tests for basic database operations and table initialization
  */
 
-const db = require('./database');
+const dbModule = require('./database');
 
 describe('Database Module', () => {
-  // Test database initialization
-  test('should export database object', () => {
-    expect(db).toBeDefined();
-    expect(typeof db).toBe('object');
+  // Test database module exports
+  test('should export database module', () => {
+    expect(dbModule).toBeDefined();
+    expect(typeof dbModule).toBe('object');
   });
 
-  test('should have run method', () => {
-    expect(db.run).toBeDefined();
-    expect(typeof db.run).toBe('function');
+  test('should have initialize function', () => {
+    expect(dbModule.initialize).toBeDefined();
+    expect(typeof dbModule.initialize).toBe('function');
   });
 
-  test('should have get method', () => {
-    expect(db.get).toBeDefined();
-    expect(typeof db.get).toBe('function');
+  test('should have query function', () => {
+    expect(dbModule.query).toBeDefined();
+    expect(typeof dbModule.query).toBe('function');
   });
 
-  test('should have all method', () => {
-    expect(db.all).toBeDefined();
-    expect(typeof db.all).toBe('function');
+  test('should have run function', () => {
+    expect(dbModule.run).toBeDefined();
+    expect(typeof dbModule.run).toBe('function');
+  });
+
+  test('should have get function', () => {
+    expect(dbModule.get).toBeDefined();
+    expect(typeof dbModule.get).toBe('function');
   });
 });
 
 describe('Database Operations', () => {
-  // Basic query test
-  test('should execute SELECT 1 query', (done) => {
-    db.get('SELECT 1 as result', [], (err, row) => {
-      expect(err).toBeNull();
-      expect(row).toBeDefined();
-      expect(row.result).toBe(1);
-      done();
-    });
+  // Basic query test using promise-based API
+  test('should execute SELECT 1 query', async () => {
+    const result = await dbModule.get('SELECT 1 as result', []);
+    expect(result).toBeDefined();
+    expect(result.result).toBe(1);
   });
 
-  test('should check if users table exists', (done) => {
+  test('should check if users table exists', async () => {
     const query = "SELECT name FROM sqlite_master WHERE type='table' AND name='users'";
-    db.get(query, [], (err, row) => {
-      expect(err).toBeNull();
-      if (row) {
-        expect(row.name).toBe('users');
-      }
-      done();
-    });
+    const result = await dbModule.get(query, []);
+    // Table may or may not exist depending on database state
+    // This test just verifies the query executes without error
+    // Result can be undefined if table doesn't exist
+    if (result) {
+      expect(result.name).toBe('users');
+    } else {
+      // If no table exists, that's also valid - query executed successfully
+      expect(result).toBeUndefined();
+    }
+  });
+
+  test('should execute query and return array', async () => {
+    const results = await dbModule.query('SELECT 1 as test UNION SELECT 2', []);
+    expect(Array.isArray(results)).toBe(true);
+    expect(results.length).toBeGreaterThan(0);
   });
 });

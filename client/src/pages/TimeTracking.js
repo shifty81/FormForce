@@ -9,6 +9,8 @@ function TimeTracking({ socket }) {
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showClockOutModal, setShowClockOutModal] = useState(false);
+  const [clockOutEntryId, setClockOutEntryId] = useState(null);
   const [editingEntry, setEditingEntry] = useState(null);
   const [filterUserId, setFilterUserId] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -39,7 +41,6 @@ function TimeTracking({ socket }) {
         if (entry.status === 'active') {
           setActiveEntries(prev => [entry, ...prev]);
         }
-        calculateStats([entry, ...timeEntries]);
       });
       
       socket.on('timeentry:updated', (entry) => {
@@ -49,7 +50,6 @@ function TimeTracking({ socket }) {
         } else {
           setActiveEntries(prev => prev.filter(e => e.id !== entry.id));
         }
-        calculateStats(timeEntries.map(e => e.id === entry.id ? entry : e));
       });
       
       socket.on('timeentry:deleted', ({ id }) => {
@@ -144,11 +144,18 @@ function TimeTracking({ socket }) {
   };
 
   const handleClockOut = async (entryId) => {
+    setClockOutEntryId(entryId);
+    setShowClockOutModal(true);
+  };
+
+  const submitClockOut = async () => {
     try {
-      const breakDuration = prompt('Enter break duration in minutes (default: 0):');
-      await axios.post(`/api/timetracking/clock-out/${entryId}`, {
-        break_duration: breakDuration ? parseInt(breakDuration) : 0
+      await axios.post(`/api/timetracking/clock-out/${clockOutEntryId}`, {
+        break_duration: parseInt(formData.break_duration) || 0
       });
+      setShowClockOutModal(false);
+      setClockOutEntryId(null);
+      setFormData({ ...formData, break_duration: 0 });
       loadData();
     } catch (error) {
       console.error('Error clocking out:', error);
@@ -542,6 +549,40 @@ function TimeTracking({ socket }) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Clock Out Modal */}
+      {showClockOutModal && (
+        <div className="modal-overlay" onClick={() => setShowClockOutModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Clock Out</h2>
+              <button onClick={() => setShowClockOutModal(false)} className="modal-close">×</button>
+            </div>
+            <div className="form-group">
+              <label>Break Duration (minutes)</label>
+              <input
+                type="number"
+                value={formData.break_duration}
+                onChange={(e) => setFormData({ ...formData, break_duration: e.target.value })}
+                className="form-input"
+                min="0"
+                placeholder="Enter break time in minutes"
+              />
+              <p style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.5rem' }}>
+                Break time will be deducted from total hours
+              </p>
+            </div>
+            <div className="modal-actions">
+              <button onClick={() => setShowClockOutModal(false)} className="btn-cancel">
+                Cancel
+              </button>
+              <button onClick={submitClockOut} className="btn-save">
+                Clock Out
+              </button>
+            </div>
           </div>
         </div>
       )}

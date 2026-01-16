@@ -3,6 +3,21 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const db = require('../database');
 
+// Helper function to calculate hours and pay
+const calculateHoursAndPay = (clockIn, clockOut, breakDuration, hourlyRate) => {
+  const clock_in_ms = new Date(clockIn).getTime();
+  const clock_out_ms = new Date(clockOut).getTime();
+  const break_duration_ms = (breakDuration || 0) * 60000; // convert minutes to milliseconds
+  
+  // Calculate total_hours as (clock_out - clock_in - break_duration) / 3600000
+  const total_hours = (clock_out_ms - clock_in_ms - break_duration_ms) / 3600000;
+  
+  // Calculate total_pay as total_hours * hourly_rate
+  const total_pay = total_hours * (hourlyRate || 0);
+  
+  return { total_hours, total_pay };
+};
+
 // Get all time entries with user information
 router.get('/', async (req, res) => {
   try {
@@ -167,15 +182,13 @@ router.post('/clock-out/:id', async (req, res) => {
     }
     
     const clock_out = new Date().toISOString();
-    const clock_in_ms = new Date(entry.clock_in).getTime();
-    const clock_out_ms = new Date(clock_out).getTime();
-    const break_duration_ms = (break_duration || entry.break_duration || 0) * 60000; // convert minutes to milliseconds
     
-    // Calculate total_hours as (clock_out - clock_in - break_duration) / 3600000
-    const total_hours = (clock_out_ms - clock_in_ms - break_duration_ms) / 3600000;
-    
-    // Calculate total_pay as total_hours * hourly_rate
-    const total_pay = total_hours * (entry.hourly_rate || 0);
+    const { total_hours, total_pay } = calculateHoursAndPay(
+      entry.clock_in,
+      clock_out,
+      break_duration || entry.break_duration || 0,
+      entry.hourly_rate || 0
+    );
     
     await db.run(
       `UPDATE time_entries 
@@ -226,13 +239,14 @@ router.put('/:id', async (req, res) => {
     let status = entry.status;
     
     if (clock_in && clock_out) {
-      const clock_in_ms = new Date(clock_in).getTime();
-      const clock_out_ms = new Date(clock_out).getTime();
-      const break_duration_ms = (break_duration !== undefined ? break_duration : entry.break_duration) * 60000;
-      
-      total_hours = (clock_out_ms - clock_in_ms - break_duration_ms) / 3600000;
-      const rate = hourly_rate !== undefined ? hourly_rate : entry.hourly_rate;
-      total_pay = total_hours * rate;
+      const result = calculateHoursAndPay(
+        clock_in,
+        clock_out,
+        break_duration !== undefined ? break_duration : entry.break_duration || 0,
+        hourly_rate !== undefined ? hourly_rate : entry.hourly_rate || 0
+      );
+      total_hours = result.total_hours;
+      total_pay = result.total_pay;
       status = 'completed';
     }
     

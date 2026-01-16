@@ -13,6 +13,7 @@ import Invoices from './pages/Invoices';
 import Login from './pages/Login';
 import AIFormUpload from './pages/AIFormUpload';
 import Reports from './pages/Reports';
+import TimeTracking from './pages/TimeTracking';
 import { io } from 'socket.io-client';
 
 function App() {
@@ -69,6 +70,7 @@ function App() {
             <Route path="/customers" element={<Customers socket={socket} />} />
             <Route path="/estimates" element={<Estimates socket={socket} />} />
             <Route path="/invoices" element={<Invoices socket={socket} />} />
+            <Route path="/timetracking" element={<TimeTracking socket={socket} />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>

@@ -152,6 +152,26 @@ const initialize = () => {
           FOREIGN KEY (estimate_id) REFERENCES estimates(id),
           FOREIGN KEY (created_by) REFERENCES users(id)
         )
+      `);
+
+      // Time entries table (for time tracking and payroll)
+      db.run(`
+        CREATE TABLE IF NOT EXISTS time_entries (
+          id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL,
+          clock_in DATETIME NOT NULL,
+          clock_out DATETIME,
+          break_duration INTEGER DEFAULT 0,
+          total_hours REAL,
+          hourly_rate REAL,
+          total_pay REAL,
+          dispatch_id TEXT,
+          notes TEXT,
+          status TEXT DEFAULT 'active',
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (user_id) REFERENCES users(id),
+          FOREIGN KEY (dispatch_id) REFERENCES dispatches(id)
+        )
       `, (err) => {
         if (err) reject(err);
         else {

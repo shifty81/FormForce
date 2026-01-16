@@ -8,7 +8,6 @@ function Reports() {
   const [dispatches, setDispatches] = useState([]);
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [dateRange, setDateRange] = useState({ start: '', end: '' });
 
   useEffect(() => {
     loadReportData();

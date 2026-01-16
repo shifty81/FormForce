@@ -7,9 +7,13 @@ import FormsList from './pages/FormsList';
 import FormView from './pages/FormView';
 import Dispatch from './pages/Dispatch';
 import Inventory from './pages/Inventory';
+import Customers from './pages/Customers';
+import Estimates from './pages/Estimates';
+import Invoices from './pages/Invoices';
 import Login from './pages/Login';
 import AIFormUpload from './pages/AIFormUpload';
 import Reports from './pages/Reports';
+import TimeTracking from './pages/TimeTracking';
 import { io } from 'socket.io-client';
 
 function App() {
@@ -63,6 +67,10 @@ function App() {
             <Route path="/ai-upload" element={<AIFormUpload />} />
             <Route path="/dispatch" element={<Dispatch socket={socket} />} />
             <Route path="/inventory" element={<Inventory socket={socket} />} />
+            <Route path="/customers" element={<Customers socket={socket} />} />
+            <Route path="/estimates" element={<Estimates socket={socket} />} />
+            <Route path="/invoices" element={<Invoices socket={socket} />} />
+            <Route path="/timetracking" element={<TimeTracking socket={socket} />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>

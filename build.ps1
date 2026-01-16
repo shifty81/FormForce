@@ -241,7 +241,7 @@ if (-not $SkipBuild) {
         Write-Success "Production build complete!"
         Write-Host ""
         Write-Info "To start the production server:"
-        Write-Info "  ${'$'}env:NODE_ENV='production'; npm start"
+        Write-Info "  `$env:NODE_ENV='production'; npm start"
     }
     else {
         Write-Info "Building for DEVELOPMENT..."

@@ -40,6 +40,12 @@ function Navigation({ user, onLogout }) {
           <Link to="/customers" className="nav-link" onClick={() => setMenuOpen(false)}>
             Customers
           </Link>
+          <Link to="/estimates" className="nav-link" onClick={() => setMenuOpen(false)}>
+            Estimates
+          </Link>
+          <Link to="/invoices" className="nav-link" onClick={() => setMenuOpen(false)}>
+            Invoices
+          </Link>
           <Link to="/reports" className="nav-link" onClick={() => setMenuOpen(false)}>
             Reports
           </Link>

@@ -100,6 +100,58 @@ const initialize = () => {
           created_by TEXT,
           FOREIGN KEY (created_by) REFERENCES users(id)
         )
+      `);
+
+      // Estimates table
+      db.run(`
+        CREATE TABLE IF NOT EXISTS estimates (
+          id TEXT PRIMARY KEY,
+          estimate_number TEXT UNIQUE NOT NULL,
+          customer_id TEXT NOT NULL,
+          title TEXT NOT NULL,
+          description TEXT,
+          status TEXT DEFAULT 'draft',
+          subtotal REAL DEFAULT 0,
+          tax_rate REAL DEFAULT 0,
+          tax_amount REAL DEFAULT 0,
+          total REAL DEFAULT 0,
+          valid_until DATE,
+          line_items TEXT,
+          notes TEXT,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          created_by TEXT,
+          FOREIGN KEY (customer_id) REFERENCES customers(id),
+          FOREIGN KEY (created_by) REFERENCES users(id)
+        )
+      `);
+
+      // Invoices table
+      db.run(`
+        CREATE TABLE IF NOT EXISTS invoices (
+          id TEXT PRIMARY KEY,
+          invoice_number TEXT UNIQUE NOT NULL,
+          customer_id TEXT NOT NULL,
+          estimate_id TEXT,
+          title TEXT NOT NULL,
+          description TEXT,
+          status TEXT DEFAULT 'draft',
+          subtotal REAL DEFAULT 0,
+          tax_rate REAL DEFAULT 0,
+          tax_amount REAL DEFAULT 0,
+          total REAL DEFAULT 0,
+          amount_paid REAL DEFAULT 0,
+          due_date DATE,
+          line_items TEXT,
+          notes TEXT,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          paid_at DATETIME,
+          created_by TEXT,
+          FOREIGN KEY (customer_id) REFERENCES customers(id),
+          FOREIGN KEY (estimate_id) REFERENCES estimates(id),
+          FOREIGN KEY (created_by) REFERENCES users(id)
+        )
       `, (err) => {
         if (err) reject(err);
         else {

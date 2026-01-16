@@ -34,7 +34,7 @@ function EditableDocumentForm() {
       // Initialize form data
       const initialData = {};
       response.data.fields.forEach(field => {
-        initialData[field.id] = '';
+        initialData[field.id] = field.type === 'checkbox' ? false : '';
       });
       setFormData(initialData);
     } catch (error) {

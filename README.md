@@ -133,7 +133,25 @@ FormForce is a comprehensive, all-in-one field service management platform that 
 ### Prerequisites
 - Node.js 14+ and npm
 
-### Installation
+### Automated Installation (Windows PowerShell) 🪟
+
+**Fastest way to get started on Windows:**
+
+```powershell
+# Clone the repository
+git clone https://github.com/shifty81/FormForce.git
+cd FormForce
+
+# Run automated build script (handles everything!)
+.\build.ps1
+
+# Or build and start development servers immediately
+.\build.ps1 -StartDev
+```
+
+The PowerShell script automatically handles all setup steps including prerequisites checking, dependency installation, environment configuration, and building the project. See [BUILD.md](BUILD.md#automated-build-windows-powershell) for all options.
+
+### Manual Installation (All Platforms)
 
 1. **Clone the repository**
 ```bash

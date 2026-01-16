@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './TimeTracking.css';
 
@@ -25,6 +25,26 @@ function TimeTracking({ socket }) {
     notes: '',
     break_duration: 0
   });
+
+  const calculateStats = useCallback((entries) => {
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const todayHours = entries
+      .filter(e => new Date(e.clock_in) >= todayStart && e.total_hours)
+      .reduce((sum, e) => sum + (e.total_hours || 0), 0);
+
+    const weekHours = entries
+      .filter(e => new Date(e.clock_in) >= weekStart && e.total_hours)
+      .reduce((sum, e) => sum + (e.total_hours || 0), 0);
+
+    setStats({
+      todayHours: todayHours.toFixed(2),
+      weekHours: weekHours.toFixed(2),
+      activeEmployees: activeEntries.length
+    });
+  }, [activeEntries.length]);
 
   useEffect(() => {
     loadData();
@@ -70,8 +90,7 @@ function TimeTracking({ socket }) {
 
   useEffect(() => {
     calculateStats(timeEntries);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeEntries]);
+  }, [timeEntries, calculateStats]);
 
   const loadData = async () => {
     try {
@@ -102,26 +121,6 @@ function TimeTracking({ socket }) {
     if (userData) {
       setCurrentUser(JSON.parse(userData));
     }
-  };
-
-  const calculateStats = (entries) => {
-    const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-    const todayHours = entries
-      .filter(e => new Date(e.clock_in) >= todayStart && e.total_hours)
-      .reduce((sum, e) => sum + (e.total_hours || 0), 0);
-
-    const weekHours = entries
-      .filter(e => new Date(e.clock_in) >= weekStart && e.total_hours)
-      .reduce((sum, e) => sum + (e.total_hours || 0), 0);
-
-    setStats({
-      todayHours: todayHours.toFixed(2),
-      weekHours: weekHours.toFixed(2),
-      activeEmployees: activeEntries.length
-    });
   };
 
   const handleClockIn = async () => {

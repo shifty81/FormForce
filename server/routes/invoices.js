@@ -182,8 +182,12 @@ router.post('/:id/payment', async (req, res) => {
       return res.status(404).json({ error: 'Invoice not found' });
     }
 
-    const newAmountPaid = (invoice.amount_paid || 0) + amount;
-    const isPaid = newAmountPaid >= invoice.total;
+    // Use parseFloat to ensure proper numeric handling and round to 2 decimal places
+    const currentAmountPaid = parseFloat(invoice.amount_paid || 0);
+    const paymentAmount = parseFloat(amount);
+    const invoiceTotal = parseFloat(invoice.total);
+    const newAmountPaid = parseFloat((currentAmountPaid + paymentAmount).toFixed(2));
+    const isPaid = newAmountPaid >= invoiceTotal - 0.01; // Account for floating-point precision (1 cent tolerance)
 
     await db.run(`
       UPDATE invoices 

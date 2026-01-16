@@ -4,12 +4,136 @@ Complete guide for building the FormForce application for development and produc
 
 ## 📋 Table of Contents
 
+- [Automated Build (Windows PowerShell)](#automated-build-windows-powershell)
 - [Prerequisites](#prerequisites)
 - [Development Build](#development-build)
 - [Production Build](#production-build)
 - [Build Optimization](#build-optimization)
 - [Deployment](#deployment)
 - [Troubleshooting](#troubleshooting)
+
+---
+
+## Automated Build (Windows PowerShell)
+
+### 🚀 One-Command Build
+
+For Windows users, we provide an automated PowerShell script that handles the entire build process.
+
+#### Quick Start
+
+```powershell
+# Run the automated build script
+.\build.ps1
+```
+
+This single command will:
+1. ✓ Check for Node.js and npm prerequisites
+2. ✓ Install all backend dependencies
+3. ✓ Install all frontend dependencies
+4. ✓ Configure environment variables (.env file)
+5. ✓ Build the project to a usable state
+
+#### Build Script Options
+
+```powershell
+# Build and start development servers immediately
+.\build.ps1 -StartDev
+
+# Build for production deployment
+.\build.ps1 -Production
+
+# Skip dependency installation (if already installed)
+.\build.ps1 -SkipInstall
+
+# Skip prerequisite checks
+.\build.ps1 -SkipPrereqCheck
+
+# Skip the build step (install dependencies only)
+.\build.ps1 -SkipBuild
+
+# Combine options
+.\build.ps1 -SkipInstall -StartDev
+```
+
+#### What the Script Does
+
+**Step 1: Prerequisites Check**
+- Verifies Node.js is installed (version 14+)
+- Verifies npm is available
+- Displays version information
+
+**Step 2: Dependency Installation**
+- Installs backend packages (`npm install`)
+- Installs frontend packages (`cd client && npm install`)
+- Handles errors gracefully
+
+**Step 3: Environment Configuration**
+- Creates `.env` file from `.env.example` if needed
+- Sets up development defaults automatically
+- Prompts for production configuration when using `-Production`
+
+**Step 4: Project Build**
+- Builds optimized React frontend bundle
+- Verifies backend configuration
+- Prepares application for deployment
+
+**Step 5: Completion**
+- Displays success message
+- Shows application URLs
+- Provides next steps and commands
+
+#### Examples
+
+**First-time setup:**
+```powershell
+# Complete setup and build
+.\build.ps1
+```
+
+**Quick development:**
+```powershell
+# Build and start dev servers in one command
+.\build.ps1 -StartDev
+```
+
+**Production deployment:**
+```powershell
+# Build for production
+.\build.ps1 -Production
+
+# Then start the production server
+$env:NODE_ENV='production'; npm start
+```
+
+**Rebuild after pulling changes:**
+```powershell
+# Dependencies already installed, just rebuild
+.\build.ps1 -SkipInstall
+```
+
+#### Troubleshooting PowerShell Script
+
+**Execution Policy Error:**
+```powershell
+# If you get "execution policy" error, run as Administrator:
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# Then run the script again
+.\build.ps1
+```
+
+**Path Issues:**
+```powershell
+# Make sure you're in the project root directory
+cd path\to\FormForce
+.\build.ps1
+```
+
+**Node.js Not Found:**
+- Ensure Node.js is installed from https://nodejs.org/
+- Restart PowerShell after installation
+- Verify with: `node --version`
 
 ---
 

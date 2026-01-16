@@ -53,11 +53,11 @@ npm run test:all
 ### Backend Tests Only
 
 ```bash
-# Run backend tests
+# Run backend tests (fast, no coverage)
 npm test
 
 # Run with coverage
-npm run test
+npm run test:coverage
 
 # Watch mode for development
 npm run test:watch
@@ -246,7 +246,8 @@ Aim for:
 
 | Command | Description |
 |---------|-------------|
-| `npm test` | Run all backend tests with coverage |
+| `npm test` | Run all backend tests (no coverage) |
+| `npm run test:coverage` | Run tests with coverage report |
 | `npm run test:watch` | Run tests in watch mode |
 | `npm run test:server` | Run backend tests only |
 

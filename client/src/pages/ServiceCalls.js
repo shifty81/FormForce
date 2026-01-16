@@ -47,12 +47,13 @@ function ServiceCalls({ socket }) {
       
       // Filter based on user type
       if (userType === 'client') {
-        // Show only calls for this customer (assuming user is linked to customer)
+        // Show only calls created by this client user
         calls = calls.filter(call => call.created_by === currentUser.id);
       } else if (userType === 'technician') {
-        // Show calls assigned to this technician
-        calls = calls.filter(call => call.assigned_to === currentUser.id || call.status !== 'completed');
+        // Show only calls assigned to this technician
+        calls = calls.filter(call => call.assigned_to === currentUser.id);
       }
+      // Admin sees all calls (no filtering)
       
       setServiceCalls(calls);
     } catch (error) {

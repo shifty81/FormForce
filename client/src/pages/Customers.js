@@ -8,6 +8,8 @@ function Customers({ socket }) {
   const [showModal, setShowModal] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [formData, setFormData] = useState({
     company_name: '',
     contact_name: '',
@@ -121,6 +123,20 @@ function Customers({ socket }) {
     });
   };
 
+  const handleGenerateQR = async (customer) => {
+    try {
+      const response = await axios.post('/api/qrcodes/generate', {
+        customer_id: customer.id,
+        location_name: customer.company_name || customer.contact_name
+      });
+      setSelectedCustomer({ ...customer, qrCode: response.data });
+      setShowQRModal(true);
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+      alert('Failed to generate QR code');
+    }
+  };
+
   const filteredCustomers = customers.filter(customer => {
     const search = searchTerm.toLowerCase();
     return (
@@ -194,6 +210,13 @@ function Customers({ socket }) {
                   )}
                 </div>
                 <div className="customer-actions">
+                  <button 
+                    onClick={() => handleGenerateQR(customer)} 
+                    className="btn-qr"
+                    title="Generate QR Code"
+                  >
+                    📱
+                  </button>
                   <button onClick={() => handleEdit(customer)} className="btn-edit">
                     ✏️
                   </button>
@@ -360,6 +383,37 @@ function Customers({ socket }) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showQRModal && selectedCustomer && (
+        <div className="modal-overlay" onClick={() => setShowQRModal(false)}>
+          <div className="modal-content qr-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>QR Code for {selectedCustomer.contact_name}</h2>
+              <button className="modal-close" onClick={() => setShowQRModal(false)}>✕</button>
+            </div>
+            <div className="qr-content">
+              <div className="qr-info">
+                <p><strong>Location:</strong> {selectedCustomer.qrCode.location_name}</p>
+                <p><strong>QR Code Data:</strong> {selectedCustomer.qrCode.qr_code_data}</p>
+                <p className="qr-instruction">
+                  📱 Technicians should scan this QR code when they arrive at this location to check in.
+                </p>
+                <p className="qr-instruction">
+                  🔒 Please maintain this QR code in a safe and accessible location at the service site.
+                </p>
+              </div>
+              <div className="qr-display">
+                <div className="qr-placeholder">
+                  <div className="qr-text-display">
+                    {selectedCustomer.qrCode.qr_code_data}
+                  </div>
+                  <p><small>Scan with FormForce app or enter this code manually</small></p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

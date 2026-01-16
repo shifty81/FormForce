@@ -40,7 +40,7 @@ const upload = multer({
 });
 
 // Extract serial numbers from text using simple patterns
-// This is a placeholder for AI-based extraction - can be enhanced with actual OCR/AI
+// TODO: Enhance with actual OCR/AI service for better serial number detection
 function extractSerialNumbers(text) {
   if (!text) return [];
   

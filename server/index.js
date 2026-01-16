@@ -11,6 +11,7 @@ const formsRouter = require('./routes/forms');
 const dispatchRouter = require('./routes/dispatch');
 const inventoryRouter = require('./routes/inventory');
 const authRouter = require('./routes/auth');
+const customersRouter = require('./routes/customers');
 
 const app = express();
 const server = http.createServer(app);
@@ -36,6 +37,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/forms', formsRouter);
 app.use('/api/dispatch', dispatchRouter);
 app.use('/api/inventory', inventoryRouter);
+app.use('/api/customers', customersRouter);
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {

@@ -37,6 +37,9 @@ function Navigation({ user, onLogout }) {
           <Link to="/inventory" className="nav-link" onClick={() => setMenuOpen(false)}>
             Inventory
           </Link>
+          <Link to="/customers" className="nav-link" onClick={() => setMenuOpen(false)}>
+            Customers
+          </Link>
           <Link to="/reports" className="nav-link" onClick={() => setMenuOpen(false)}>
             Reports
           </Link>

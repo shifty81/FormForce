@@ -80,6 +80,26 @@ const initialize = () => {
           updated_by TEXT,
           FOREIGN KEY (updated_by) REFERENCES users(id)
         )
+      `);
+
+      // Customers table (CRM)
+      db.run(`
+        CREATE TABLE IF NOT EXISTS customers (
+          id TEXT PRIMARY KEY,
+          company_name TEXT,
+          contact_name TEXT NOT NULL,
+          email TEXT,
+          phone TEXT,
+          address TEXT,
+          city TEXT,
+          state TEXT,
+          zip TEXT,
+          notes TEXT,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          created_by TEXT,
+          FOREIGN KEY (created_by) REFERENCES users(id)
+        )
       `, (err) => {
         if (err) reject(err);
         else {

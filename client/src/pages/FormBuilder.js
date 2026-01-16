@@ -9,7 +9,6 @@ function FormBuilder() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [fields, setFields] = useState([]);
-  const [draggedIndex, setDraggedIndex] = useState(null);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(!!id);
 
@@ -36,6 +35,7 @@ function FormBuilder() {
     if (id) {
       loadForm();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadForm = async () => {
@@ -73,13 +73,6 @@ function FormBuilder() {
 
   const removeField = (index) => {
     setFields(fields.filter((_, i) => i !== index));
-  };
-
-  const moveField = (fromIndex, toIndex) => {
-    const newFields = [...fields];
-    const [movedField] = newFields.splice(fromIndex, 1);
-    newFields.splice(toIndex, 0, movedField);
-    setFields(newFields);
   };
 
   const handleSave = async () => {

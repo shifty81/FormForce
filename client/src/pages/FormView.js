@@ -8,7 +8,6 @@ function FormView() {
   const { id } = useParams();
   const [form, setForm] = useState(null);
   const [formData, setFormData] = useState({});
-  const [signature, setSignature] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -18,6 +17,7 @@ function FormView() {
 
   useEffect(() => {
     loadForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   useEffect(() => {

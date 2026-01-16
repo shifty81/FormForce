@@ -70,6 +70,7 @@ function TimeTracking({ socket }) {
 
   useEffect(() => {
     calculateStats(timeEntries);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeEntries]);
 
   const loadData = async () => {

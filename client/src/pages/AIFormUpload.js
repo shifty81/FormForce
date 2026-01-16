@@ -243,6 +243,17 @@ function AIFormUpload() {
     return fields;
   };
 
+  const generateFieldPositions = (fields) => {
+    // Generate field positions (estimated positions for now)
+    return fields.map((field, index) => ({
+      fieldId: field.id,
+      x: 10,
+      y: 10 + (index * 50),
+      width: 80,
+      height: 40
+    }));
+  };
+
   const handleUpload = async () => {
     if (!file && !capturedImage) return;
 
@@ -274,15 +285,7 @@ function AIFormUpload() {
         
         // Generate fields from OCR text with positions
         fields = analyzeTextAndGenerateFields(extractedText);
-        
-        // Generate field positions (estimated positions for now)
-        fieldPositions = fields.map((field, index) => ({
-          fieldId: field.id,
-          x: 10,
-          y: 10 + (index * 50),
-          width: 80,
-          height: 40
-        }));
+        fieldPositions = generateFieldPositions(fields);
         
         title = 'Form from Image';
         description = `AI-generated form from image capture. Detected ${fields.length} fields.`;
@@ -296,15 +299,7 @@ function AIFormUpload() {
         await new Promise(resolve => setTimeout(resolve, 1500));
         
         fields = generateSampleFields(file.name);
-        
-        // Generate field positions for PDF
-        fieldPositions = fields.map((field, index) => ({
-          fieldId: field.id,
-          x: 10,
-          y: 10 + (index * 50),
-          width: 80,
-          height: 40
-        }));
+        fieldPositions = generateFieldPositions(fields);
         
         title = file.name.replace(/\.[^/.]+$/, '');
         description = `AI-generated form from ${file.name}`;

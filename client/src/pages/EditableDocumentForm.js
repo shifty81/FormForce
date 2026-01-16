@@ -167,13 +167,13 @@ function EditableDocumentForm() {
 
     // Check for signature
     const hasSignatureField = form.fields.some(f => f.type === 'signature');
+    let signatureData = null;
     if (hasSignatureField) {
-      const signatureData = getSignatureData();
+      signatureData = getSignatureData();
       if (!signatureData) {
         alert('Please provide your signature');
         return;
       }
-      formData.signature = signatureData;
     }
 
     setSubmitting(true);
@@ -182,7 +182,7 @@ function EditableDocumentForm() {
       // Submit the form data
       await axios.post(`/api/forms/${id}/submit`, {
         data: formData,
-        signature: formData.signature || null
+        signature: signatureData
       });
 
       // Download the filled copy
@@ -275,7 +275,7 @@ function EditableDocumentForm() {
         return (
           <input
             type="checkbox"
-            checked={value === 'true' || value === true}
+            checked={!!value}
             onChange={(e) => handleFieldChange(field.id, e.target.checked)}
             className="field-checkbox"
           />

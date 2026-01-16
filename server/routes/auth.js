@@ -10,7 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 // Register
 router.post('/register', async (req, res) => {
   try {
-    const { username, password, email, role } = req.body;
+    const { username, password, email, role, user_type } = req.body;
     
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password required' });
@@ -20,12 +20,12 @@ router.post('/register', async (req, res) => {
     const id = uuidv4();
 
     await db.run(
-      'INSERT INTO users (id, username, password, email, role) VALUES (?, ?, ?, ?, ?)',
-      [id, username, hashedPassword, email, role || 'user']
+      'INSERT INTO users (id, username, password, email, role, user_type) VALUES (?, ?, ?, ?, ?, ?)',
+      [id, username, hashedPassword, email, role || 'user', user_type || 'admin']
     );
 
-    const token = jwt.sign({ id, username, role: role || 'user' }, JWT_SECRET);
-    res.json({ token, user: { id, username, email, role: role || 'user' } });
+    const token = jwt.sign({ id, username, role: role || 'user', user_type: user_type || 'admin' }, JWT_SECRET);
+    res.json({ token, user: { id, username, email, role: role || 'user', user_type: user_type || 'admin' } });
   } catch (error) {
     console.error('Register error:', error);
     res.status(500).json({ error: 'Registration failed' });
@@ -50,7 +50,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, username: user.username, role: user.role },
+      { id: user.id, username: user.username, role: user.role, user_type: user.user_type },
       JWT_SECRET
     );
 
@@ -60,7 +60,8 @@ router.post('/login', async (req, res) => {
         id: user.id,
         username: user.username,
         email: user.email,
-        role: user.role
+        role: user.role,
+        user_type: user.user_type
       }
     });
   } catch (error) {
@@ -72,7 +73,7 @@ router.post('/login', async (req, res) => {
 // Get all users (for dropdowns, etc.)
 router.get('/users', async (req, res) => {
   try {
-    const users = await db.query('SELECT id, username, email, role FROM users ORDER BY username');
+    const users = await db.query('SELECT id, username, email, role, user_type FROM users ORDER BY username');
     res.json(users);
   } catch (error) {
     console.error('Error fetching users:', error);

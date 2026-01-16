@@ -15,6 +15,7 @@ const initialize = () => {
           password TEXT NOT NULL,
           email TEXT,
           role TEXT DEFAULT 'user',
+          user_type TEXT DEFAULT 'admin',
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
       `);
@@ -171,6 +172,106 @@ const initialize = () => {
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
           FOREIGN KEY (user_id) REFERENCES users(id),
           FOREIGN KEY (dispatch_id) REFERENCES dispatches(id)
+        )
+      `);
+
+      // Service calls table (enhanced dispatches for the new system)
+      db.run(`
+        CREATE TABLE IF NOT EXISTS service_calls (
+          id TEXT PRIMARY KEY,
+          title TEXT NOT NULL,
+          description TEXT,
+          customer_id TEXT,
+          assigned_to TEXT,
+          status TEXT DEFAULT 'pending',
+          priority TEXT DEFAULT 'normal',
+          due_date DATETIME,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          completed_at DATETIME,
+          created_by TEXT,
+          FOREIGN KEY (customer_id) REFERENCES customers(id),
+          FOREIGN KEY (assigned_to) REFERENCES users(id),
+          FOREIGN KEY (created_by) REFERENCES users(id)
+        )
+      `);
+
+      // Service call comments table for real-time communication
+      db.run(`
+        CREATE TABLE IF NOT EXISTS service_call_comments (
+          id TEXT PRIMARY KEY,
+          service_call_id TEXT NOT NULL,
+          user_id TEXT NOT NULL,
+          comment TEXT NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (service_call_id) REFERENCES service_calls(id),
+          FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+      `);
+
+      // Service call pictures with AI metadata
+      db.run(`
+        CREATE TABLE IF NOT EXISTS service_call_pictures (
+          id TEXT PRIMARY KEY,
+          service_call_id TEXT NOT NULL,
+          file_path TEXT NOT NULL,
+          file_name TEXT NOT NULL,
+          serial_numbers TEXT,
+          comment TEXT,
+          uploaded_by TEXT NOT NULL,
+          uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (service_call_id) REFERENCES service_calls(id),
+          FOREIGN KEY (uploaded_by) REFERENCES users(id)
+        )
+      `);
+
+      // Equipment table for tracking equipment at client sites
+      db.run(`
+        CREATE TABLE IF NOT EXISTS equipment (
+          id TEXT PRIMARY KEY,
+          service_call_id TEXT NOT NULL,
+          customer_id TEXT,
+          name TEXT NOT NULL,
+          serial_number TEXT,
+          model TEXT,
+          manufacturer TEXT,
+          location_details TEXT,
+          notes TEXT,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (service_call_id) REFERENCES service_calls(id),
+          FOREIGN KEY (customer_id) REFERENCES customers(id)
+        )
+      `);
+
+      // QR codes for client locations
+      db.run(`
+        CREATE TABLE IF NOT EXISTS qr_codes (
+          id TEXT PRIMARY KEY,
+          customer_id TEXT NOT NULL,
+          qr_code_data TEXT UNIQUE NOT NULL,
+          location_name TEXT,
+          is_active INTEGER DEFAULT 1,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (customer_id) REFERENCES customers(id)
+        )
+      `);
+
+      // Check-ins table for technician check-in/check-out tracking
+      db.run(`
+        CREATE TABLE IF NOT EXISTS check_ins (
+          id TEXT PRIMARY KEY,
+          service_call_id TEXT NOT NULL,
+          technician_id TEXT NOT NULL,
+          qr_code_id TEXT NOT NULL,
+          check_in_time DATETIME NOT NULL,
+          check_out_time DATETIME,
+          location_latitude REAL,
+          location_longitude REAL,
+          notes TEXT,
+          FOREIGN KEY (service_call_id) REFERENCES service_calls(id),
+          FOREIGN KEY (technician_id) REFERENCES users(id),
+          FOREIGN KEY (qr_code_id) REFERENCES qr_codes(id)
         )
       `, (err) => {
         if (err) reject(err);

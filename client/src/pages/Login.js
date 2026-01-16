@@ -7,6 +7,7 @@ function Login({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [userType, setUserType] = useState('admin');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -18,7 +19,7 @@ function Login({ onLogin }) {
     try {
       const endpoint = isRegister ? '/api/auth/register' : '/api/auth/login';
       const data = isRegister 
-        ? { username, password, email } 
+        ? { username, password, email, user_type: userType } 
         : { username, password };
       
       const response = await axios.post(endpoint, data);
@@ -54,16 +55,32 @@ function Login({ onLogin }) {
           </div>
 
           {isRegister && (
-            <div className="form-group">
-              <label className="form-label">Email</label>
-              <input
-                type="email"
-                className="form-control"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+            <>
+              <div className="form-group">
+                <label className="form-label">Email</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">User Type</label>
+                <select
+                  className="form-control"
+                  value={userType}
+                  onChange={(e) => setUserType(e.target.value)}
+                  required
+                >
+                  <option value="admin">Admin - Full access and management</option>
+                  <option value="technician">Technician - Field service and equipment tracking</option>
+                  <option value="client">Client - Submit service requests and view updates</option>
+                </select>
+              </div>
+            </>
           )}
 
           <div className="form-group">

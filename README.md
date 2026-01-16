@@ -96,7 +96,6 @@ FormForce is a comprehensive, all-in-one field service management platform that 
 - **Google Drive, Box, OneDrive**: Cloud storage connections
 - **Microsoft Dynamics 365, Autodesk**: Construction software links
 - **Open API**: Custom integrations for proprietary systems
-- **Servicecall.ai**: AI-powered service call routing
 
 ---
 

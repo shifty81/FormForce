@@ -1,5 +1,8 @@
 # FormForce
 
+[![CI/CD Pipeline](https://github.com/shifty81/FormForce/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/shifty81/FormForce/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 **AI-Powered Mobile Forms & Field Service Management Platform**
 
 FormForce is a comprehensive, all-in-one field service management platform that combines AI-powered form creation with dispatching, inventory tracking, customer management (CRM), invoicing, and mobile capabilities. Designed for small to mid-sized businesses in trades like HVAC, plumbing, electrical, and construction.
@@ -116,6 +119,16 @@ FormForce is a comprehensive, all-in-one field service management platform that 
 
 ---
 
+## 📚 Documentation
+
+- **[Quick Setup Guide](SETUP.md)** - Get started in 5 minutes
+- **[Build Guide](BUILD.md)** - Building for development and production
+- **[Testing Guide](TESTING.md)** - Running and writing tests
+- **[Features Overview](FEATURES.md)** - Complete feature list
+- **[Security](SECURITY.md)** - Security measures and compliance
+
+---
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -161,17 +174,32 @@ npm start
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:3001
 
+### Testing
+
+```bash
+# Run all tests
+npm run test:all
+
+# Run backend tests only
+npm test
+
+# Run frontend tests only
+cd client && npm test
+```
+
+See [TESTING.md](TESTING.md) for detailed testing documentation.
+
 ### Production Build
 
 ```bash
-# Build the frontend
-cd client
-npm run build
-cd ..
+# Build everything
+npm run build:all
 
 # Start production server
 NODE_ENV=production npm start
 ```
+
+See [BUILD.md](BUILD.md) for detailed build and deployment instructions.
 
 ---
 

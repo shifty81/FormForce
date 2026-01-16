@@ -191,6 +191,58 @@ netstat -ano | findstr :3001   # Windows
    - Export to PDF/Excel
    - Monitor business metrics
 
+## Testing
+
+### Run Tests
+
+```bash
+# Run all tests
+npm run test:all
+
+# Run backend tests
+npm test
+
+# Run frontend tests
+cd client
+npm test
+```
+
+### Verify Installation
+
+```bash
+# Check backend can start
+npm run server
+
+# Check frontend can build
+cd client
+npm run build
+```
+
+For complete testing documentation, see [TESTING.md](TESTING.md).
+
+## Building for Production
+
+### Quick Build
+
+```bash
+# Build everything
+npm run build:all
+```
+
+### Manual Build Steps
+
+```bash
+# Build frontend
+cd client
+npm run build
+cd ..
+
+# Start production server
+NODE_ENV=production npm start
+```
+
+For complete build documentation, see [BUILD.md](BUILD.md).
+
 ## Next Steps
 
 - Explore the comprehensive [README.md](README.md) for full documentation

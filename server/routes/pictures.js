@@ -5,6 +5,16 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../database');
 const fs = require('fs').promises;
+const rateLimit = require('express-rate-limit');
+
+// Rate limiter for file upload and deletion operations
+const fileOperationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: 'Too many file operations from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -152,7 +162,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete picture
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', fileOperationLimiter, async (req, res) => {
   try {
     const picture = await db.get('SELECT * FROM service_call_pictures WHERE id = ?', [req.params.id]);
     
@@ -180,7 +190,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Serve uploaded pictures
-router.get('/view/:filename', (req, res) => {
+router.get('/view/:filename', fileOperationLimiter, (req, res) => {
   const filePath = path.join(__dirname, '../../uploads/service-call-pictures', req.params.filename);
   res.sendFile(filePath);
 });
